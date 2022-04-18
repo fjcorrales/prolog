@@ -83,6 +83,7 @@ reverse([X|Xs],Ys):-
 
 /*
     Para el predicado 7 voy a necesitar saber la tabla de XOR para poder saber los resultados de las operaciones
+    seguramente esté mal y haya que borrarlo
 */
 xor([bind(1)],bind(1),bind(0)).
 xor([bind(1)],bind(0),bind(1)).
