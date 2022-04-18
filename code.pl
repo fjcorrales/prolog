@@ -81,6 +81,16 @@ reverse([X|Xs],Ys):-
     reverse(Xs,Zs),
     append(Zs,[X],Ys).
 
+/*
+    Para el predicado 7 voy a necesitar saber la tabla de XOR para poder saber los resultados de las operaciones
+*/
+xor([bind(1)],bind(1),bind(0)).
+xor([bind(1)],bind(0),bind(1)).
+xor([bind(0)],bind(1),bind(1)).
+xor([bind(0)],bind(0),bind(0)).
+
+%PREDICADOS!
+
 %Predicado 1 -> byte_list/1
 /*
     Lo que queremos es comprobar si los elementos de una lista dada son de tipo byte, por lo que una funcion
@@ -122,7 +132,9 @@ get_nth_bit_from_byte(0, [Bn|_],Bn).
 get_nth_bit_from_byte(N, Hb, BN):-
     hex_byte(Hb),
     byte_conversion(Hb, Bb),%no se si necesario
-    reverse(Bb, RH).
+    reverse(Bb, RH),
+
+
 get_nth_bit_from_byte(N, Bb, BN):-
     binary_byte(Bb),
     reverse(Bb,RB).
@@ -133,3 +145,4 @@ get_nth_bit_from_byte(N, Bb, BN):-
 
 
 %Predicado 7 -> byte_xor/3
+byte_xor().
