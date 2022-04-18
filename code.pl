@@ -118,6 +118,7 @@ byte_list_conversion([H|Hn],[B|Bn]):-
     byte_list_conversion(Hn,Bn).
 
 %Predicado 4 -> get_nth_bit_from_byte/3
+get_nth_bit_from_byte(0, [Bn|_],Bn).
 get_nth_bit_from_byte(N, Hb, BN):-
     hex_byte(Hb),
     byte_conversion(Hb, Bb),%no se si necesario
