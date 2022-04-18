@@ -5,7 +5,7 @@ author_data('Corrales', 'Falco', 'Daniel', 'B190410').
 bind(0).
 bind(1).
 %Define a binary byte as a list of 8 binary digits.
-binary_byte([bind(B7)],[bind(B6)],[bind(B5)],[bind(B4)],[bind(B3)],[bind(B2)],[bind(B1)],[bind(B0)]):-
+binary_byte([bind(B7),bind(B6),bind(B5),bind(B4),bind(B3),bind(B2),bind(B1),bind(B0)]):-
     bind(B7),
     bind(B6),
     bind(B5),
