@@ -72,6 +72,15 @@ hex_to_bin_byte([hexd(e)], [bind(1),bind(1),bind(1),bind(0)]). %el 14
 hex_to_bin_byte([hexd(f)], [bind(1),bind(1),bind(1),bind(1)]). %el 15
 
 
+/*
+    Para el predicado 4 voy a necesitar invertir la lista para poder poner el byte menos significativo de la lista de bytes
+    a la izqueirda y no a la derecha para poder ir sacando la cabeza y comprobar si es un digito binario
+*/
+reverse([],[]).
+reverse([X|Xs],Ys):-
+    reverse(Xs,Zs),
+    append(Zs,[X],Ys).
+
 %Predicado 1 -> byte_list/1
 /*
     Lo que queremos es comprobar si los elementos de una lista dada son de tipo byte, por lo que una funcion
@@ -109,8 +118,13 @@ byte_list_conversion([H|Hn],[B|Bn]):-
     byte_list_conversion(Hn,Bn).
 
 %Predicado 4 -> get_nth_bit_from_byte/3
-
-
+get_nth_bit_from_byte(N, Hb, BN):-
+    hex_byte(Hb),
+    byte_conversion(Hb, Bb),%no se si necesario
+    reverse(Bb, RH).
+get_nth_bit_from_byte(N, Bb, BN):-
+    binary_byte(Bb),
+    reverse(Bb,RB).
 %Predicado 5 -> byte_list_clsh/2
 
 
