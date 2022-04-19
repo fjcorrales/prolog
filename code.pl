@@ -79,20 +79,42 @@ hex_to_bin_byte([hexd(f)], [bind(1),bind(1),bind(1),bind(1)]). %el 15
 reverse([],[]).
 reverse([X|Xs],Ys):-
     reverse(Xs,Zs),
-    append(Zs,[X],Ys).
+    concat(Zs,[X],Ys).
+/*
+    Para poder hacer funcionar la funcion reverse, voy a necesitar hacer la funcion append
+*/
+concat([],[Ys],[Ys]).
+concat([X|Xs],Ys,[X|Zs]):-
+    concat(Xs,Ys,Zs).
+
+/*
+    Para el predicado 4 tambien voy a necesitar un predicado auxiliar para asi no encontrar fallos en el caso de querer obtener el 
+    primer elemento de primeras
+*/
+get_nth_bit_from_byte_2(0, [Bn|_],Bn).            %caso base
+get_nth_bit_from_byte_2(s(N), [X|R], BN):-
+    get_nth_bit_from_byte_2(N, R, BN).            %caso base
 
 /*
     Para el predicado 7 voy a necesitar saber la tabla de XOR para poder saber los resultados de las operaciones
     seguramente esté mal y haya que borrarlo
 */
-xor([bind(1)],bind(1),bind(0)).
-xor([bind(1)],bind(0),bind(1)).
-xor([bind(0)],bind(1),bind(1)).
-xor([bind(0)],bind(0),bind(0)).
+table_xor(bind(1),bind(1),bind(0)).
+table_xor(bind(1),bind(0),bind(1)).
+table_xor(bind(0),bind(1),bind(1)).
+table_xor(bind(0),bind(0),bind(0)).
 
+/*
+    Para el predicado 7 necsito tambien un predicado auxiliar para comprobar individualmete bit por bit si cumple la tabla 
+    xor
+*/
+check_xor([],[],[]).                                    %caso base
+check_xor([Z|Z1],[X|X1],[Y|Y1]):-
+    table_xor(Z,X,Y),
+    check_xor(Z1,X1,Y1).
 %PREDICADOS!
 
-%Predicado 1 -> byte_list/1
+%Predicado 1 -> byte_list/
 /*
     Lo que queremos es comprobar si los elementos de una lista dada son de tipo byte, por lo que una funcion
     recursiva es una buena opcion, ya que asi, lo que puedo hacer es comprobar cada elemento de manera individual 
@@ -129,16 +151,26 @@ byte_list_conversion([H|Hn],[B|Bn]):-
     byte_list_conversion(Hn,Bn).
 
 %Predicado 4 -> get_nth_bit_from_byte/3
-get_nth_bit_from_byte(0, [Bn|_],Bn).
+/*
+    En este predicado, el objetivo es saber si el bit en la posicion N de una cadena dada es igual a un bit dicho
+    para esto, como dicen en  el enunciado, hemos de tener en cuenta que tendremos que invertir la cadena de bytes dada 
+    por el tema de los indices. Como este es a su vez un predicado polimórfico, habremos de introducir comprobaciones para ver en que caso estamos
+    ya que podemos tener cadenas de HEX y de BIN. Una vez hecho todo esto, por temas de eficiencia he creado un predicado auxiliar 
+    recursivo en el cual realizo la busqueda y comparacion del elemento(este necesita operar ya con la cadena invertida). 
+*/
+%Caso Hexadecimal
 get_nth_bit_from_byte(N, Hb, BN):-
     hex_byte(Hb),
     byte_conversion(Hb, Bb),%no se si necesario
     reverse(Bb, RH),
+    get_nth_bit_from_byte_2(N, RH, BN).
 
-
+%Caso binario
 get_nth_bit_from_byte(N, Bb, BN):-
     binary_byte(Bb),
-    reverse(Bb,RB).
+    reverse(Bb,RB),
+    get_nth_bit_from_byte_2(N, RB, BN).
+
 %Predicado 5 -> byte_list_clsh/2
 
 
@@ -146,4 +178,26 @@ get_nth_bit_from_byte(N, Bb, BN):-
 
 
 %Predicado 7 -> byte_xor/3
-byte_xor().
+/*
+    EN este predicado, el objetivo es hallar el xor entre dos cadenas de bits, como queremos que sea funcional para 
+    cadenas tanto hexadecimales como binarias lo pirmero que hacemos en cada predicado es comprobar cual de las dos opciones es,
+    a continuacion si es hexadecimal lo convierto a binario y a partir de aqui ambos se resuelven de la misma forma, 
+    llamo a mi predicado auxiliar recursivo que comprueba las operaciones xor
+*/
+%Caso hexadecimal
+byte_xor([],[],[]).                                 %caso base
+byte_xor(Xs,Ys,Zs):-
+    hex_byte(Xs),
+    hex_byte(Ys),
+    hex_byte(Zs),
+    byte_conversion(Xs,XB),
+    byte_conversion(Ys,YB),
+    byte_conversion(Zs,ZB),
+    check_xor(ZB,XB,YB).
+
+%Caso binario
+byte_xor(Xs,Ys,Zs):-
+    binary_byte(Xs),
+    binary_byte(Ys),
+    binary_byte(Zs),
+    check_xor(ZB,XB,YB).
