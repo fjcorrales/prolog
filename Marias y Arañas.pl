@@ -81,3 +81,4 @@ guardar_grafo(G):-
     
                 %2.2 -- Predicado aranya
 aranya.
+%FIN
